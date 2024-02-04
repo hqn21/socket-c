@@ -1,16 +1,16 @@
-#include <stdio.h>      // for stdout
-#include <stdlib.h>     // for NULL, atoi
-#include <string.h>     // for bzero, strlen, strncmp
-#include <sys/socket.h> // for socket, AF_INET, SOCK_STREAM
-#include <netinet/in.h> // for struct sockaddr_in
-#include <arpa/inet.h>  // for htons
-#include <unistd.h>     // for close, read, getppid
-#include <signal.h>     // for kill, SIGKILL
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <signal.h>
 #include <errno.h>
 #include <unistd.h>
 #include <netdb.h>
 
-#define MAX_LINE 1024   // define MAX_LINE
+#define MAX_LINE 1024
 
 /* my_inet_addr() - convert host/IP into binary data in network byte order */
 in_addr_t my_inet_addr(char *host) {
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
     char *default_path = "/";
     char *default_port = "80";
 
-    // 解析 URL
+    /* If argc is not equal to 2, then print usage */
     if (argc != 2) {
         fprintf(stderr, "usage: %s <URL>\n", argv[0]);
         return 1;
@@ -109,20 +109,18 @@ int main(int argc, char *argv[]) {
         path = default_path;
     }
 
-    // 開啟 TCP 連接
+    /* Open TCP connection */
     sockfd = tcp_open_client(host, default_port);
     if (sockfd < 0) {
         perror("tcp_open_client");
         return 1;
     }
 
-    // printf("Connected to %s:%s\n", host, default_port);
-
-    // 建立並發送 GET 請求
+    /* Send HTTP GET request */
     snprintf(buf, sizeof(buf), "GET /%s HTTP/1.1\r\nHost: %s\r\n\r\n", path, host);
     send(sockfd, buf, strlen(buf), 0);
 
-    // 讀取伺服器的回應
+    /* Read and print the response */
     while (1) {
         int ret = readready(sockfd);
         if (ret < 0) {

@@ -1,17 +1,17 @@
-#include <stdio.h>      // for stdout
-#include <stdlib.h>     // for NULL, atoi
-#include <string.h>     // for bzero, strlen, strncmp
-#include <sys/socket.h> // for socket, AF_INET, SOCK_STREAM
-#include <netinet/in.h> // for struct sockaddr_in
-#include <arpa/inet.h>  // for htons
-#include <unistd.h>     // for close, read, getppid
-#include <signal.h>     // for kill, SIGKILL
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <signal.h>
 #include <errno.h>
 #include <unistd.h>
 #include <netdb.h>
 #include <stdbool.h>
 
-#define MAX_LINE 1024   // define MAX_LINE
+#define MAX_LINE 1024
 #define MAX_RESPONSE_SIZE 1000000
 
 /* readready() - check whether read ready for given file descriptor
@@ -105,7 +105,6 @@ int tcp_open_server(char *port) {
 
 void do_main(int newsockfd, char* host) {
     int ret, sockfd;
-    // sockfd = tcp_open_client(host, "80");
     char buf[MAX_LINE];
     while ((ret = readready(newsockfd)) >= 0) {
         if (ret == 0) {
@@ -163,7 +162,7 @@ int main(int argc, char *argv[]) {
     unsigned int clilen;
     struct sockaddr_in cli_addr;
 
-    // argv[1] => host, argv[2] => port
+    /* argv[1] => host, argv[2] => port */
     if (argc != 3) {
         fprintf(stderr, "usage: %s <host> <port>\n", argv[0]);
         return 1;
@@ -176,22 +175,18 @@ int main(int argc, char *argv[]) {
         host = argv[1];
     }
     sockfd = tcp_open_server(argv[2]);
-    // printf("Server is running on port %s\n", argv[1]);
+
     for (;;) {
         /* Wait for a connection from a client process. (Concurrent Server) */
         clilen = sizeof(cli_addr);
         newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
         if (newsockfd < 0) {
-            // printf("Connection from %s\n", inet_ntoa(cli_addr.sin_addr));
-            // printf("New socket %d\n", newsockfd);
             exit(1); /* server: accept error */
         }
         if ((childpid = fork()) < 0) {
-            // printf("Forked child %d\n", childpid);
             exit(1); /* server: fork error */
         }
         if (childpid == 0) { /* child process */
-            // printf("Child process %d\n", getpid());
             close(sockfd);      /* close original socket*/
             do_main(newsockfd, host); /* process the request */
             exit(0);

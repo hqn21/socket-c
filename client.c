@@ -1,16 +1,16 @@
-#include <stdio.h>      // for stdout
-#include <stdlib.h>     // for NULL, atoi
-#include <string.h>     // for bzero, strlen, strncmp
-#include <sys/socket.h> // for socket, AF_INET, SOCK_STREAM
-#include <netinet/in.h> // for struct sockaddr_in
-#include <arpa/inet.h>  // for htons
-#include <unistd.h>     // for close, read, getppid
-#include <signal.h>     // for kill, SIGKILL
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h> 
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <signal.h>
 #include <errno.h>
 #include <unistd.h>
 #include <netdb.h>
 
-#define MAX_LINE 1024   // define MAX_LINE
+#define MAX_LINE 1024
 
 /* my_inet_addr() - convert host/IP into binary data in network byte order */
 in_addr_t my_inet_addr(char *host) {
@@ -92,7 +92,6 @@ int main(int argc, char *argv[]) {
     }
 
     sockfd = tcp_open_client(argv[1], argv[2]);
-    // printf("Connected to %s:%s\n", argv[1], argv[2]);
     while (1) {
         if ((ret = readready(sockfd)) < 0) {
             break;
